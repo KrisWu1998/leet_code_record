@@ -48,49 +48,45 @@
 ## 2.最长回文子串
 
 ```
-/** 因leetCode查无最优解，目前的解法在leetCode上的测试题目长一点会出现时间超时。但是结果是正确的
+/**
  * @param {string} s
  * @return {string}
  */
 var longestPalindrome = function(s) {
   const len = s.length;
-  let value = '';
 
-  for(let i = 0; i < len; i++) {
+  if (len < 2) return s;
 
-    const for_Num = len - (i + 1);
+  // begin: 开始位置
+  // maxLen: 目前截取到的字符串的长度
+  let begin = 0, maxLen = 1;
 
-    let IStrValue = s[i];
+  // 循环开始与结束位置
+  const validateLocation = (left, right) => {
+    while (left < right) {
+      if (s.charAt(left) !== s.charAt(right)) {
+        return false
+      }
+      left++;
+      right--;
+    }
+    return true
+  }
 
-    let saveVal = IStrValue;
+  for(let i = 0; i < len - 1; i++) {
 
-    if (!value) value = IStrValue;
-
-    for (let j = 0; j < for_Num; j++) {
-
-      const for_J = len - (for_Num - j);
-      const j_current = s[for_J]; // 二次循环提取的字符串；
-      
-      saveVal += j_current;
-      const reverseSpellStr = reverseString(saveVal);
-
-
-      if (saveVal === reverseSpellStr) {
-        if (!value || value.length < saveVal.length) {
-          value = saveVal
-        }
+    for (let j = i + 1; j < len; j++) {
+      // j - 1 + 1 当前开始位置与结束位置，是否比目前已截取的长度 长 （减少不必要的赋值）
+      if (j - i + 1 > maxLen && validateLocation(i, j)) {
+        begin = i;
+        maxLen = j - i + 1;
       }
     }
 
   }
 
-  return value;
+  return s.slice(begin, begin + maxLen);
 };
-
-// 处理将字符串颠倒
-function reverseString (str) {
-  return (str.split("").reverse()).join("");
-} 
 
 console.log(longestPalindrome('babad')) // bab
 console.log(longestPalindrome('cbbd')) // bb
